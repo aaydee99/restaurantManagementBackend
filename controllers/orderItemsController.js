@@ -23,13 +23,7 @@ exports.getOrderItemById = async (req, res, next) => {
 
 // Add a new order item
 exports.addOrderItem = async (req, res, next) => {
-    const orderItem = new OrderItem({
-        order: req.body.order,
-        menuItem: req.body.menuItem,
-        quantity: req.body.quantity,
-        price: req.body.price
-    });
-
+    const orderItem = new OrderItem(req.body);
     try {
         const newOrderItem = await orderItem.save();
         res.status(201).json(newOrderItem);
@@ -41,16 +35,9 @@ exports.addOrderItem = async (req, res, next) => {
 // Update an order item
 exports.updateOrderItem = async (req, res, next) => {
     try {
-        const orderItem = await OrderItem.findById(req.params.id);
+        const orderItem = await OrderItem.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!orderItem) return res.status(404).json({ message: 'Order item not found' });
-
-        orderItem.order = req.body.order;
-        orderItem.menuItem = req.body.menuItem;
-        orderItem.quantity = req.body.quantity;
-        orderItem.price = req.body.price;
-
-        const updatedOrderItem = await orderItem.save();
-        res.json(updatedOrderItem);
+        res.json(orderItem);
     } catch (err) {
         next(err);
     }
@@ -59,10 +46,8 @@ exports.updateOrderItem = async (req, res, next) => {
 // Delete an order item
 exports.deleteOrderItem = async (req, res, next) => {
     try {
-        const orderItem = await OrderItem.findById(req.params.id);
+        const orderItem = await OrderItem.findByIdAndDelete(req.params.id);
         if (!orderItem) return res.status(404).json({ message: 'Order item not found' });
-
-        await orderItem.remove();
         res.json({ message: 'Order item deleted' });
     } catch (err) {
         next(err);

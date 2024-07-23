@@ -23,13 +23,7 @@ exports.getInventoryItemById = async (req, res, next) => {
 
 // Add a new inventory item
 exports.addInventoryItem = async (req, res, next) => {
-    const inventoryItem = new Inventory({
-        menuItem: req.body.menuItem,
-        supplier: req.body.supplier,
-        quantity: req.body.quantity,
-        lastUpdated: req.body.lastUpdated
-    });
-
+    const inventoryItem = new Inventory(req.body);
     try {
         const newInventoryItem = await inventoryItem.save();
         res.status(201).json(newInventoryItem);
@@ -41,16 +35,9 @@ exports.addInventoryItem = async (req, res, next) => {
 // Update an inventory item
 exports.updateInventoryItem = async (req, res, next) => {
     try {
-        const inventoryItem = await Inventory.findById(req.params.id);
+        const inventoryItem = await Inventory.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!inventoryItem) return res.status(404).json({ message: 'Inventory item not found' });
-
-        inventoryItem.menuItem = req.body.menuItem;
-        inventoryItem.supplier = req.body.supplier;
-        inventoryItem.quantity = req.body.quantity;
-        inventoryItem.lastUpdated = req.body.lastUpdated;
-
-        const updatedInventoryItem = await inventoryItem.save();
-        res.json(updatedInventoryItem);
+        res.json(inventoryItem);
     } catch (err) {
         next(err);
     }
@@ -59,10 +46,8 @@ exports.updateInventoryItem = async (req, res, next) => {
 // Delete an inventory item
 exports.deleteInventoryItem = async (req, res, next) => {
     try {
-        const inventoryItem = await Inventory.findById(req.params.id);
+        const inventoryItem = await Inventory.findByIdAndDelete(req.params.id);
         if (!inventoryItem) return res.status(404).json({ message: 'Inventory item not found' });
-
-        await inventoryItem.remove();
         res.json({ message: 'Inventory item deleted' });
     } catch (err) {
         next(err);

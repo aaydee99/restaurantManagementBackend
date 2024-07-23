@@ -23,13 +23,7 @@ exports.getReservationById = async (req, res, next) => {
 
 // Add a new reservation
 exports.addReservation = async (req, res, next) => {
-    const reservation = new Reservation({
-        customer: req.body.customer,
-        table: req.body.table,
-        reservationDate: req.body.reservationDate,
-        numberOfGuests: req.body.numberOfGuests
-    });
-
+    const reservation = new Reservation(req.body);
     try {
         const newReservation = await reservation.save();
         res.status(201).json(newReservation);
@@ -41,16 +35,9 @@ exports.addReservation = async (req, res, next) => {
 // Update a reservation
 exports.updateReservation = async (req, res, next) => {
     try {
-        const reservation = await Reservation.findById(req.params.id);
+        const reservation = await Reservation.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!reservation) return res.status(404).json({ message: 'Reservation not found' });
-
-        reservation.customer = req.body.customer;
-        reservation.table = req.body.table;
-        reservation.reservationDate = req.body.reservationDate;
-        reservation.numberOfGuests = req.body.numberOfGuests;
-
-        const updatedReservation = await reservation.save();
-        res.json(updatedReservation);
+        res.json(reservation);
     } catch (err) {
         next(err);
     }
@@ -59,10 +46,8 @@ exports.updateReservation = async (req, res, next) => {
 // Delete a reservation
 exports.deleteReservation = async (req, res, next) => {
     try {
-        const reservation = await Reservation.findById(req.params.id);
+        const reservation = await Reservation.findByIdAndDelete(req.params.id);
         if (!reservation) return res.status(404).json({ message: 'Reservation not found' });
-
-        await reservation.remove();
         res.json({ message: 'Reservation deleted' });
     } catch (err) {
         next(err);

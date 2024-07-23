@@ -23,13 +23,7 @@ exports.getSupplierById = async (req, res, next) => {
 
 // Add a new supplier
 exports.addSupplier = async (req, res, next) => {
-    const supplier = new Supplier({
-        name: req.body.name,
-        contactName: req.body.contactName,
-        phoneNumber: req.body.phoneNumber,
-        email: req.body.email
-    });
-
+    const supplier = new Supplier(req.body);
     try {
         const newSupplier = await supplier.save();
         res.status(201).json(newSupplier);
@@ -41,16 +35,9 @@ exports.addSupplier = async (req, res, next) => {
 // Update a supplier
 exports.updateSupplier = async (req, res, next) => {
     try {
-        const supplier = await Supplier.findById(req.params.id);
+        const supplier = await Supplier.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!supplier) return res.status(404).json({ message: 'Supplier not found' });
-
-        supplier.name = req.body.name;
-        supplier.contactName = req.body.contactName;
-        supplier.phoneNumber = req.body.phoneNumber;
-        supplier.email = req.body.email;
-
-        const updatedSupplier = await supplier.save();
-        res.json(updatedSupplier);
+        res.json(supplier);
     } catch (err) {
         next(err);
     }
@@ -59,10 +46,8 @@ exports.updateSupplier = async (req, res, next) => {
 // Delete a supplier
 exports.deleteSupplier = async (req, res, next) => {
     try {
-        const supplier = await Supplier.findById(req.params.id);
+        const supplier = await Supplier.findByIdAndDelete(req.params.id);
         if (!supplier) return res.status(404).json({ message: 'Supplier not found' });
-
-        await supplier.remove();
         res.json({ message: 'Supplier deleted' });
     } catch (err) {
         next(err);

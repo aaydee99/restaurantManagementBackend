@@ -23,12 +23,7 @@ exports.getTableById = async (req, res, next) => {
 
 // Add a new table
 exports.addTable = async (req, res, next) => {
-    const table = new Table({
-        tableNumber: req.body.tableNumber,
-        seatingCapacity: req.body.seatingCapacity,
-        status: req.body.status
-    });
-
+    const table = new Table(req.body);
     try {
         const newTable = await table.save();
         res.status(201).json(newTable);
@@ -40,15 +35,9 @@ exports.addTable = async (req, res, next) => {
 // Update a table
 exports.updateTable = async (req, res, next) => {
     try {
-        const table = await Table.findById(req.params.id);
+        const table = await Table.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!table) return res.status(404).json({ message: 'Table not found' });
-
-        table.tableNumber = req.body.tableNumber;
-        table.seatingCapacity = req.body.seatingCapacity;
-        table.status = req.body.status;
-
-        const updatedTable = await table.save();
-        res.json(updatedTable);
+        res.json(table);
     } catch (err) {
         next(err);
     }
@@ -57,10 +46,8 @@ exports.updateTable = async (req, res, next) => {
 // Delete a table
 exports.deleteTable = async (req, res, next) => {
     try {
-        const table = await Table.findById(req.params.id);
+        const table = await Table.findByIdAndDelete(req.params.id);
         if (!table) return res.status(404).json({ message: 'Table not found' });
-
-        await table.remove();
         res.json({ message: 'Table deleted' });
     } catch (err) {
         next(err);

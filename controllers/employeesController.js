@@ -23,15 +23,7 @@ exports.getEmployeeById = async (req, res, next) => {
 
 // Add a new employee
 exports.addEmployee = async (req, res, next) => {
-    const employee = new Employee({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        position: req.body.position,
-        phoneNumber: req.body.phoneNumber,
-        email: req.body.email,
-        hireDate: req.body.hireDate
-    });
-
+    const employee = new Employee(req.body);
     try {
         const newEmployee = await employee.save();
         res.status(201).json(newEmployee);
@@ -43,18 +35,9 @@ exports.addEmployee = async (req, res, next) => {
 // Update an employee
 exports.updateEmployee = async (req, res, next) => {
     try {
-        const employee = await Employee.findById(req.params.id);
+        const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!employee) return res.status(404).json({ message: 'Employee not found' });
-
-        employee.firstName = req.body.firstName;
-        employee.lastName = req.body.lastName;
-        employee.position = req.body.position;
-        employee.phoneNumber = req.body.phoneNumber;
-        employee.email = req.body.email;
-        employee.hireDate = req.body.hireDate;
-
-        const updatedEmployee = await employee.save();
-        res.json(updatedEmployee);
+        res.json(employee);
     } catch (err) {
         next(err);
     }
@@ -63,10 +46,8 @@ exports.updateEmployee = async (req, res, next) => {
 // Delete an employee
 exports.deleteEmployee = async (req, res, next) => {
     try {
-        const employee = await Employee.findById(req.params.id);
+        const employee = await Employee.findByIdAndDelete(req.params.id);
         if (!employee) return res.status(404).json({ message: 'Employee not found' });
-
-        await employee.remove();
         res.json({ message: 'Employee deleted' });
     } catch (err) {
         next(err);
