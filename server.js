@@ -1,9 +1,20 @@
+// Import routes
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const errorHandler = require('./middleware/errorHandler');
+const customersRouter = require('./routes/customers');
+const employeesRouter = require('./routes/employees');
+const tablesRouter = require('./routes/tables');
+const reservationsRouter = require('./routes/reservations');
+const ordersRouter = require('./routes/orders');
+const orderItemsRouter = require('./routes/orderItems');
+const menuRouter = require('./routes/menu');
+const suppliersRouter = require('./routes/suppliers');
+const inventoryRouter = require('./routes/inventory');
+const { connectDB } = require('./utils/db');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -15,17 +26,6 @@ app.use(bodyParser.json());
 // MongoDB connection
 connectDB();
 
-// Import routes
-const customersRouter = require('./routes/customers');
-const employeesRouter = require('./routes/employees');
-const tablesRouter = require('./routes/tables');
-const reservationsRouter = require('./routes/reservations');
-const ordersRouter = require('./routes/orders');
-const orderItemsRouter = require('./routes/orderItems');
-const menuRouter = require('./routes/menu');
-const suppliersRouter = require('./routes/suppliers');
-const inventoryRouter = require('./routes/inventory');
-const { connectDB } = require('./utils/db');
 
 // Use routes
 app.use('/customers', customersRouter);
