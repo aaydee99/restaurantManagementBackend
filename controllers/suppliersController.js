@@ -3,7 +3,7 @@ const Supplier = require('../models/supplier');
 // Get all suppliers
 exports.getAllSuppliers = async (req, res, next) => {
     try {
-        const suppliers = await Supplier.find();
+        const suppliers = await Supplier.find().exec();
         res.json(suppliers);
     } catch (err) {
         next(err);
@@ -13,7 +13,7 @@ exports.getAllSuppliers = async (req, res, next) => {
 // Get a supplier by ID
 exports.getSupplierById = async (req, res, next) => {
     try {
-        const supplier = await Supplier.findById(req.params.id);
+        const supplier = await Supplier.findById(req.params.id).exec();
         if (!supplier) return res.status(404).json({ message: 'Supplier not found' });
         res.json(supplier);
     } catch (err) {
@@ -35,7 +35,7 @@ exports.addSupplier = async (req, res, next) => {
 // Update a supplier
 exports.updateSupplier = async (req, res, next) => {
     try {
-        const supplier = await Supplier.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const supplier = await Supplier.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true }).exec();
         if (!supplier) return res.status(404).json({ message: 'Supplier not found' });
         res.json(supplier);
     } catch (err) {
@@ -46,7 +46,7 @@ exports.updateSupplier = async (req, res, next) => {
 // Delete a supplier
 exports.deleteSupplier = async (req, res, next) => {
     try {
-        const supplier = await Supplier.findByIdAndDelete(req.params.id);
+        const supplier = await Supplier.findByIdAndDelete(req.params.id).exec();
         if (!supplier) return res.status(404).json({ message: 'Supplier not found' });
         res.json({ message: 'Supplier deleted' });
     } catch (err) {
