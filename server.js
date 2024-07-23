@@ -33,15 +33,15 @@ connectDB();
 
 // Use routes
 app.use('/api/auth', authRoutes);
-app.use('/customers', protect, customersRouter);
-app.use('/employees', protect, employeesRouter);
-app.use('/tables', protect, tablesRouter);
-app.use('/reservations', protect, reservationsRouter);
-app.use('/orders', protect, ordersRouter);
-app.use('/orderItems', protect, orderItemsRouter);
-app.use('/menu', protect, menuRouter);
-app.use('/suppliers', protect, suppliersRouter);
-app.use('/inventory', protect, inventoryRouter);
+app.use('/api/customers', protect, customersRouter);
+app.use('/api/employees', protect, employeesRouter);
+app.use('/api/tables', protect, tablesRouter);
+app.use('/api/reservations', protect, reservationsRouter);
+app.use('/api/orders', protect, ordersRouter);
+app.use('/api/orderItems', protect, orderItemsRouter);
+app.use('/api/menu', protect, menuRouter);
+app.use('/api/suppliers', protect, suppliersRouter);
+app.use('/api/inventory', protect, inventoryRouter);
 
 app.get('/', (req, res) => {
     res.send('Welcome to the Restaurant Management System');
