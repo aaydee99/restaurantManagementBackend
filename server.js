@@ -19,7 +19,6 @@ const {specs, swaggerUi} = require('./swagger');
 const { protect } = require('./middleware/authMiddleware'); // Add middleware for protecting routes
 const morgan = require('morgan');
 const authRoutes = require('./routes/auth');
-const setupSwagger = require('./swagger');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -52,8 +51,11 @@ app.get('/', (req, res) => {
 app.use(errorHandler);
 
 
-setupSwagger(app); // Add this line to setup Swagger
-
+app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(specs),
+);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
