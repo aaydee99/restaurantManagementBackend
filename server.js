@@ -15,7 +15,7 @@ const menuRouter = require('./routes/menu');
 const suppliersRouter = require('./routes/suppliers');
 const inventoryRouter = require('./routes/inventory');
 const { connectDB } = require('./utils/db');
-
+const {specs, swaggerUi} = require('./swagger');
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -44,6 +44,13 @@ app.get('/', (req, res) => {
 
 // Error handling middleware
 app.use(errorHandler);
+
+
+app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(specs),
+);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
